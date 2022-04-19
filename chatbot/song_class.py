@@ -17,14 +17,14 @@ import os
 list = [author, title, text]"""
 
 import os
-os.chdir('../analysis')
+#os.chdir('../analysis')
 os.getcwd()
-import data_analysis
+#import data_analysis
 
 #upload dataframe
-df = pd.read_csv("tokenized_poems.csv", header=None)
-df=df.fillna(" ")
-df.columns = ["text"]
+#df = pd.read_csv("tokenized_poems.csv", header=None)
+#df=df.fillna(" ")
+#df.columns = ["text"]
 
 #name the class and set input(text_input)
 class Poet:
@@ -32,12 +32,7 @@ class Poet:
         self.text_input=text_input
 
 
-        root_folder='.'
-        data_folder_name='data'
-
-        DATA_PATH = os.path.abspath(os.path.join(root_folder, data_folder_name))
-
-        glove_filename='./../analysis/glove.6B.100d.txt'
+        glove_filename='glove.6B.100d.txt'
 
         word2vec_output_file = glove_filename+'.word2vec'
         
@@ -123,5 +118,7 @@ class Poet:
     def get_closset_match(self, key_phrase):
         embedded_key_phrase = self.embed_glove(pd.Series([key_phrase]))
         index = self.get_most_similar_song(embedded_key_phrase)
+        song_title = self.df.iloc[index]['Title']
+        return song_title
         #embedded_key_phrase = list(embedded_key_phrase) * self.df.shape[0]
         
