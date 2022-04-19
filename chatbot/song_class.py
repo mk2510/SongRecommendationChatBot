@@ -30,13 +30,13 @@ class Poet:
         string = string
         ps = PorterStemmer()
         tokens = word_tokenize(string.lower())
-        filtered_tokens = [ps.stem(word) for word in tokens if word not in /
-        stopwords.words('english') and bool(re.search("[-01234}{56789`>(</',;:!?.)]", /
+        filtered_tokens = [ps.stem(word) for word in tokens if word not in \
+        stopwords.words('english') and bool(re.search("[-01234}{56789`>(</',;:!?.)]", \
         word))==False]
         return filtered_tokens
 
 #funcion that counts how many times the input tokens appear in a given token
-    def (self,row,filtered_tokens):
+    def count(self,row,filtered_tokens):
         tot=0
         for item in filtered_tokens:
             tot+=row.count(item)
@@ -58,19 +58,20 @@ class Poet:
 
         if target_count == 0:
             print("No match was found for the query: " + str(self.text_input))
-            return ["Try with another query, such as: /poem summer day.","Sorry, /
-            no match was found","Nobody"]
+            return ["Try with another query, such as: /poem summer day.","Sorry," + \
+            "no match was found","Nobody"]
         else:
             df_poems = pd.read_csv("poems_collection.csv", header=None)
             df_poems.head()
             target_index = target_index + 1    
-            return [df_poems.iloc[target_index,1],df_poems.iloc[target_index,2],/
-            df_poems.iloc[target_index,0]]
+        
+        return [df_poems.iloc[target_index,1],df_poems.iloc[target_index,2],\
+                df_poems.iloc[target_index,0]]
 
-        return song_title
+        #return song_title
      
     
 #use keyBert to get the summarized line of the song which is recommended
     def get_line(self, song_title):
-                    
+        pass
                     
