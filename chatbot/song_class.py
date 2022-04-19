@@ -6,6 +6,12 @@ import re
 from nltk.corpus import stopwords
 from nltk import word_tokenize
 import time
+from gensim.scripts.glove2word2vec import glove2word2vec
+from gensim.models import KeyedVectors
+import numpy as np
+from scipy import spatial
+
+import os
 
 """design a class that takes in a string and returns closest poem as:
 list = [author, title, text]"""
@@ -24,6 +30,35 @@ df.columns = ["text"]
 class Poet:
     def __init__(self,text_input):
         self.text_input=text_input
+
+
+        root_folder='.'
+        data_folder_name='data'
+
+        DATA_PATH = os.path.abspath(os.path.join(root_folder, data_folder_name))
+
+        glove_filename='./../analysis/glove.6B.100d.txt'
+
+        word2vec_output_file = glove_filename+'.word2vec'
+        
+        self.model = KeyedVectors.load_word2vec_format(word2vec_output_file, binary=False)
+    
+    def embed_glove(self,s):
+        return_ls = []
+        for sentence in s:
+            array = []
+            for word in sentence.split():
+                try:
+                    array.append(self.model.get_vector(word))
+                except:
+                    pass
+            array = np.array(array)
+            #print(array.shape)
+            return_ls.append(array.mean(axis = 0))
+    
+    def embedd_songs(self):
+        self.df = pd.read_csv('TaylorSwift.csv')
+        self.df['embed_lyric'] = self.embed_glove(self.df['Lyric'])
 
 #function to tokenize/clean the input text
     def tokenize_string(self, string):  
@@ -74,4 +109,19 @@ class Poet:
 #use keyBert to get the summarized line of the song which is recommended
     def get_line(self, song_title):
         pass
-                    
+
+    def get_most_similar_song(self, embedded_phrase):
+        min_index = -1
+        min_similarity = - float('inf')
+        for index, row in self.df.iterrows():
+            v1 = row['embeded']
+            temp = 1 - spatial.distance.cosine(v1, embedded_phrase)
+            if temp > min_similarity:
+                min_index = index
+        return min_index
+
+    def get_closset_match(self, key_phrase):
+        embedded_key_phrase = self.embed_glove(pd.Series([key_phrase]))
+        index = self.get_most_similar_song(embedded_key_phrase)
+        #embedded_key_phrase = list(embedded_key_phrase) * self.df.shape[0]
+        
